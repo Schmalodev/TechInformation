@@ -1,24 +1,26 @@
 package monitor
 
-import "github.com/shirou/gopsutil/v3/mem"
+import (
+	"fmt"
 
-type RamInfo struct {
-	Total          uint64
-	Used           uint64
-	Free           uint64
-	UsedPreferenct float64
+	"github.com/shirou/gopsutil/v3/mem"
+)
+
+type RamInformations struct {
+	Total int
+	Used  int
 }
 
-func GetRamInfo() (*RamInfo, error) {
+func GetRamInformation() RamInformations {
 	v, err := mem.VirtualMemory()
 	if err != nil {
-		return nil, err
+		fmt.Println("its not Reading")
 	}
 
-	return &RamInfo{
-		Total:          v.Total,
-		Used:           v.Used,
-		Free:           v.Free,
-		UsedPreferenct: v.UsedPercent,
-	}, nil
+	ram := RamInformations{
+		Total: int(v.Total),
+		Used:  int(v.Used),
+	}
+
+	return ram
 }
