@@ -12,6 +12,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: install emorgency dependencies
+      run: sudo apt install libayatana-appindicator3-dev
+
     - name: make build
       run: make build
 
