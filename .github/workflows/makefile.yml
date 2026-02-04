@@ -9,7 +9,7 @@ on:
 jobs:
 
   Documentation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -21,17 +21,14 @@ jobs:
 
 
   golangci-lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: Documentation
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install ayatana dependencies
-        run: |
-          sudo add-apt-repository ppa:alexlarsson/ayatana -y
-          sudo apt-get update
-          sudo apt-get install -y libayatana-appindicator3-dev
+        run: sudo apt-get update && sudo apt-get install -y libayatana-appindicator3-dev
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -49,34 +46,28 @@ jobs:
 
 
   Build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: golangci-lint
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install ayatana dependencies
-        run: |
-          sudo add-apt-repository ppa:alexlarsson/ayatana -y
-          sudo apt-get update
-          sudo apt-get install -y libayatana-appindicator3-dev
+        run: sudo apt-get update && sudo apt-get install -y libayatana-appindicator3-dev
 
       - name: Build
         run: make build
 
 
   Tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: Build
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install ayatana dependencies
-        run: |
-          sudo add-apt-repository ppa:alexlarsson/ayatana -y
-          sudo apt-get update
-          sudo apt-get install -y libayatana-appindicator3-dev
+        run: sudo apt-get update && sudo apt-get install -y libayatana-appindicator3-dev
 
       - name: Install dependencies
         run: make build
