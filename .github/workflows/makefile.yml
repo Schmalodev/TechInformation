@@ -7,54 +7,33 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
+
   Documentation:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Fix apt cache
-      run: |
-        sudo rm -rf /var/lib/apt/lists/*
-        sudo apt-get clean
-        sudo apt-get update --fix-missing
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
 
+      - name: Lint Markdown
+        run: markdownlint "**/*.md"
 
-    - name: install emorgency dependencies
-      run: sudo apt install libayatana-appindicator3-dev
-
-    - name: make build
-      run: make build
-
-    - name: install Makefile linter
-      run: npm install -g markdownlint-cli
-
-    - name: linting
-      run: markdownlint "**/*.md"
 
   golangci-lint:
     runs-on: ubuntu-latest
     needs: Documentation
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Fix apt cache
-        run: |
-            sudo rm -rf /var/lib/apt/lists/*
-            sudo apt-get clean
-            sudo apt-get update --fix-missing
-
-      - name: install emorgency dependencies
-        run: sudo apt install libayatana-appindicator3-dev
-
-      - name: Install Dependencies
-        run: make build
+      - uses: actions/checkout@v4
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.22'   # Wichtig: 1.23 ist NICHT kompatibel!
+
+      - name: Install dependencies
+        run: make build
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v6
@@ -62,43 +41,27 @@ jobs:
           version: v1.60.1
           args: --timeout=5m
 
+
   Build:
     runs-on: ubuntu-latest
     needs: golangci-lint
+
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Fix apt cache
-      run: |
-        sudo rm -rf /var/lib/apt/lists/*
-        sudo apt-get clean
-        sudo apt-get update --fix-missing
+      - name: Build
+        run: make build
 
-
-    - name: install emorgency dependencies
-      run: sudo apt install libayatana-appindicator3-dev
-
-    - name: make build
-      run: make build
 
   Tests:
     runs-on: ubuntu-latest
     needs: Build
+
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Fix apt cache
-      run: |
-        sudo rm -rf /var/lib/apt/lists/*
-        sudo apt-get clean
-        sudo apt-get update --fix-missing
+      - name: Install dependencies
+        run: make build
 
-
-    - name: install emorgency dependencies
-      run: sudo apt install libayatana-appindicator3-dev
-
-    - name: Install dependencies
-      run: make build
-
-    - name: Unit-Tests
-      run: make unit-test
+      - name: Unit Tests
+        run: make unit-test
