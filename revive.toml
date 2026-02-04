@@ -1,0 +1,6 @@
+ignoreGeneratedHeader = false
+
+[rule.blank-imports]
+[rule.exported]
+[rule.indent-error-flow]
+[rule.var-naming]
