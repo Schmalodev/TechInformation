@@ -2,7 +2,7 @@ build:
 	go build ./src/cmd/ram-monitor
 
 deploy:
-	build
+	make build
 	./ram-monitor
 
 unit-test:
