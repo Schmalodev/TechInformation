@@ -7,6 +7,30 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
+  Documentation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fix apt cache
+      run: |
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get clean
+        sudo apt-get update --fix-missing
+
+
+    - name: install emorgency dependencies
+      run: sudo apt install libayatana-appindicator3-dev
+
+    - name: make build
+      run: make build
+
+    - name: install Makefile linter
+      run: npm install -g markdownlint-cli
+
+    - name: linting
+      run: markdownlint "**/*.md"
+
   Build:
     runs-on: ubuntu-latest
     steps:
